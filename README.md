@@ -1,6 +1,5 @@
-# **CivicSense** **Flood Focus Portion of the Urban Risk Intelligence Twin** **ArcGIS, Cesium for Omniverse, and NVIDIA PhysX Fluid Simulation**
-
-### *CMU – AI Engineering for Digital Twins – Final Group Project*
+# **CivicSense - Urban Risk Intelligence Twin** 
+## *Focus on Flood Risk of Proposed Buildings* 
 
 ## **1\. Overview**
 
@@ -11,11 +10,11 @@ CivicSense–FloodTwin is a **geospatially accurate, physics-driven Digital Twin
 * **NVIDIA Omniverse** → USD-native environment  
 * **PhysX GPU Fluid Particles** → interactive water–building collisions
 
-The system demonstrates how a city can **sense, visualize, and reason** about flood risk — supporting Water Managers, planners, and emergency operations (evacuation routing, infrastructure impact, hazard awareness).
+The system demonstrates how a City Manager can **Observe, Orient, Decide, Act** about flood risk — supporting hazard awareness for proposed infrastructure.
 
 ## **2\. System Architecture**
 
-*NOTE: Insert `docs/architecture/system_architecture.png`)*
+![System Architecture](docs/architecture/system-architecture.png)
 
 ## **3\. Features**
 
@@ -35,64 +34,28 @@ The system demonstrates how a city can **sense, visualize, and reason** about fl
   * Used for urban details or to improve placement accuracy
 
 ## **4\. Repository Layout**
-
-CivicSense-FloodTwin/
-│
+```
+CivicSense-Flood/
 ├── README.md
 ├── LICENSE
 ├── .gitignore
-│
 ├── docs/
-│   ├── architecture/  
-│   │    ├── system_architecture.png
-│   │    ├── raster_to_particles_flow.png
-│   │    └── geospatial_stack_diagram.png
-│   ├── sprint/  
-│   │    ├── sprint_plan.md
-│   │    └── daily_logs/   
-│   ├── figures/   (screenshots)
-│   └── references/ (papers, URLs, specs)
-│
+│ ├── architecture/
+│ ├── sprint/
+│ ├── figures/
+│ └── references/
 ├── data/
-│   ├── samples/  
-│   │    ├── sample_dem.tif
-│   │    ├── sample_depth.tif
-│   │    └── sample_extent.tif
-│   ├── metadata/
-│   │    ├── rasters_readme.md
-│   │    ├── coordinate_systems.json
-│   │    └── simulation_parameters.json
-│   └── README.md  (explains where to download full rasters)
-│
+│ ├── samples/
+│ ├── metadata/
+│ └── README.md
 ├── omniverse/
-│   ├── usd/
-│   │    ├── base_scene.usda
-│   │    ├── buildings/
-│   │    ├── pointclouds/
-│   │    ├── particles/
-│   │    └── graphs/
-│   ├── scripts/
-│   │    ├── convert_pointcloud_to_usd.py
-│   │    └── omni_graph_demo.py
-│   └── README.md
-│
+│ ├── usd/
+│ ├── scripts/
+│ └── README.md
 ├── cesium/
-│   ├── ion/
-│   │    └── asset_manifest.json
-│   └── README.md
-│
 ├── arcgis/
-│   ├── exports/
-│   │    ├── sample_exports_readme.md
-│   ├── scripts/
-│   │    └── export_raster_settings.json
-│   └── README.md
-│
 └── notebooks/
-    ├── validation/
-    │    └── raster_alignment_check.ipynb
-    └── analysis/
-         └── elevation_cross_section.ipynb
+```
 
 ## **5\. Installation & Requirements**
 
@@ -158,13 +121,34 @@ Daily log templates in: /docs/sprint/daily\_logs/
 * Performance constrained by particle count  
 * Rasters must be preprocessed for identical resolution
 
-## **11\. Next Steps**
+## **11\. Next Steps - Toward a Full NVIDIA Earth-2 + Omniverse Workflow**
 
-* Add Isaac Sim vehicles & pedestrian agents  
-* Implement evacuation routing layer  
-* Link to real-time data (rain gauges, sensors)  
-* Replace particle fluids with heightfield hydrodynamics (future)
+This prototype currently uses ArcGIS Pro for hydrology, Cesium for geospatial context, and Omniverse PhysX fluids for interactive visualization. A natural next phase is to migrate the hydrology and boundary conditions onto NVIDIA’s end-to-end AI + physics stack:
 
+1. Integrate NVIDIA Earth-2 weather NIMs for boundary conditions  
+   - Use Earth-2 APIs and NIM microservices (e.g., FourCastNet for global atmospheric dynamics and CorrDiff for km-scale downscaling) to generate ensembles of high-resolution rainfall scenarios over the Buellton basin, instead of hard-coded rainfall time series.  
+   - Treat CivicSense-FloodTwin as a regional “node” that consumes Earth-2 forecasts and converts them into local runoff and inundation scenarios.  
+
+2. Replace the raster hydrology solver with NVIDIA PhysicsNeMo (Modulus) flood models  
+   - Use existing 2D/3D hydraulic simulations and observed events to train physics-ML models in NVIDIA PhysicsNeMo / Modulus that emulate the shallow-water solver for the Santa Ynez watershed.  
+   - This follows the pattern of recent NVIDIA flood-modeling work where basin-scale inundation is learned as a surrogate model on the Earth-2 platform and then served for rapid what-if analysis.  
+   - In this architecture, ArcGIS becomes primarily a data management and validation tool, while real-time prediction is handled by GPU-accelerated PhysicsNeMo models.
+
+3. Adopt Earth-2 + Omniverse blueprints for city-scale analytics and visualization  
+   - Use the Earth-2 Weather Analytics Blueprint and Omniverse real-time physics digital twin blueprints as reference implementations for:  
+     - ingesting multi-layer geospatial data,  
+     - serving AI weather and flood predictions via microservices, and  
+     - streaming them into Omniverse as live USD layers for decision support dashboards.  
+   - CivicSense-FloodTwin would then align with NVIDIA’s reference pipeline (CUDA-X libraries + PhysicsNeMo + NIM + Omniverse) for climate and flood resilience applications.
+
+4. Extend the digital twin with AI agents and sensor fusion  
+   - Add Metropolis/CV pipelines for CCTV and UAV video to detect blocked culverts, debris, or vehicles in real time, publishing those as dynamic obstacles into the Omniverse scene.  
+   - Attach LLM-based NIM agents for Water Managers that can query the twin (“Which zones are over 0.5 m depth in the next 2 hours?”) and generate evacuation guidance and scenario comparisons.
+
+5. Move toward continuous, operational deployment  
+   - Package the PhysicsNeMo flood surrogate, Earth-2 rainfall NIM calls, and the Omniverse visualization pipeline into containerized microservices orchestrated on OVX or cloud GPUs.  
+   - Run the system in “forecast mode” (consuming live weather feeds) and “training mode” (replaying historical storms) to support both research and operational resilience planning.
+ 
 ## **12\. License**
 
 MIT License.
