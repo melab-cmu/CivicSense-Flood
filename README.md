@@ -36,7 +36,63 @@ The system demonstrates how a city can **sense, visualize, and reason** about fl
 
 ## **4\. Repository Layout**
 
-Insert folder tree from above, or reference `/docs/repo_structure.md`.
+CivicSense-FloodTwin/
+│
+├── README.md
+├── LICENSE
+├── .gitignore
+│
+├── docs/
+│   ├── architecture/  
+│   │    ├── system_architecture.png
+│   │    ├── raster_to_particles_flow.png
+│   │    └── geospatial_stack_diagram.png
+│   ├── sprint/  
+│   │    ├── sprint_plan.md
+│   │    └── daily_logs/   
+│   ├── figures/   (screenshots)
+│   └── references/ (papers, URLs, specs)
+│
+├── data/
+│   ├── samples/  
+│   │    ├── sample_dem.tif
+│   │    ├── sample_depth.tif
+│   │    └── sample_extent.tif
+│   ├── metadata/
+│   │    ├── rasters_readme.md
+│   │    ├── coordinate_systems.json
+│   │    └── simulation_parameters.json
+│   └── README.md  (explains where to download full rasters)
+│
+├── omniverse/
+│   ├── usd/
+│   │    ├── base_scene.usda
+│   │    ├── buildings/
+│   │    ├── pointclouds/
+│   │    ├── particles/
+│   │    └── graphs/
+│   ├── scripts/
+│   │    ├── convert_pointcloud_to_usd.py
+│   │    └── omni_graph_demo.py
+│   └── README.md
+│
+├── cesium/
+│   ├── ion/
+│   │    └── asset_manifest.json
+│   └── README.md
+│
+├── arcgis/
+│   ├── exports/
+│   │    ├── sample_exports_readme.md
+│   ├── scripts/
+│   │    └── export_raster_settings.json
+│   └── README.md
+│
+└── notebooks/
+    ├── validation/
+    │    └── raster_alignment_check.ipynb
+    └── analysis/
+         └── elevation_cross_section.ipynb
 
 ## **5\. Installation & Requirements**
 
